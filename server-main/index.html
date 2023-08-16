@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <link rel="icon" href="assets/favicon.png" type="image/png" />
+    <title>webpack 5</title>
+  </head>
+  <body>
+    <div id="shell">
+      <div id="toto" data-id="toto">
+        <h1>TOTO</h1>
+      </div>
+    </div>
+    <script>
+      const defaultConfig = {
+        method: "GET",
+        cache: "no-cache",
+        credentials: "omit",
+        headers: {
+          // Accept: 'application/json',
+          // 'Content-Type': 'application/json-patch+json',
+        },
+      };
+
+      async function request(url, config) {
+        const configG = {
+          ...defaultConfig,
+          ...config,
+          headers: {
+            ...defaultConfig.headers,
+            ...config?.headers,
+          },
+        };
+
+        const response = await fetch(url, configG);
+        const data = await response.json();
+        return data;
+      }
+
+      // const stageURL = "https://iolitebets-toto-frontend.kube.private/";
+      const URL = `http://localhost:5005`;
+      const getManifest = `${URL}/static/assets-manifest.json`;
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        console.log("DOMContentLoaded");
+
+        try {
+          const res = await request(getManifest);
+          console.log("res", res);
+          if (res) {
+            const js = res["main.js"];
+            const css = res["main.css"];
+            createScript(js);
+            createStyle(css);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      });
+
+      function createScript(src) {
+        const js = document.createElement("script");
+        js.async = 'async';
+        js.type = 'text/javascript';
+        js.src = `${URL}${src}`;
+        js.dataset['dynamic'] = true;
+        document.head.appendChild(js);
+      }
+      function createStyle(src) {
+        const link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.type = "text/css";
+        link.href = `${URL}${src}`;
+        link.dataset['dynamic'] = true;
+        document.head.appendChild(link);
+      }
+    </script>
+  </body>
+</html>
