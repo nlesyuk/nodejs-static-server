@@ -10,74 +10,537 @@
     <title>webpack 5</title>
   </head>
   <body>
+    <style>
+      .dn {
+        display: none;
+      }
+    </style>
+    <header data-id='header-wrapper'>
+      <!-- <a class="user-info dn" data-clickstream-action="NAV_ACCOUNT_BUTTON" href="/account">
+        login
+      </a> -->
+    </header>
+
     <div id="shell">
       <div id="toto" data-id="toto">
         <h1>TOTO</h1>
       </div>
     </div>
     <script>
-      const defaultConfig = {
-        method: "GET",
-        cache: "no-cache",
-        credentials: "omit",
-        headers: {
-          // Accept: 'application/json',
-          // 'Content-Type': 'application/json-patch+json',
-        },
-      };
+      const isStage = false
+      const isProd = false
 
-      async function request(url, config) {
-        const configG = {
-          ...defaultConfig,
-          ...config,
-          headers: {
-            ...defaultConfig.headers,
-            ...config?.headers,
-          },
-        };
-
-        const response = await fetch(url, configG);
-        const data = await response.json();
-        return data;
-      }
-
-      // const stageURL = "https://iolitebets-toto-frontend.kube.private/";
-      const URL = `http://localhost:5005`;
-      const getManifest = `${URL}/static/assets-manifest.json`;
+      let url = "http://localhost:2000";
+      if (isStage) url = "https://iolitebets-toto-frontend.kube.private"
+      if (isProd) url = "https://iolitebets-toto-frontend.cloud.pmcorp.loc"
+      const manifestURL = isStage || isProd
+          ? url
+          : `${url}/static/assets-manifest.json`;
 
       document.addEventListener("DOMContentLoaded", async () => {
-        console.log("DOMContentLoaded");
+        let env = 'local'
+        if (isStage) env = 'stage'
+        if (isProd) env = 'prod'
+        document.querySelector('title').textContent = `TOTO:${env}`;
 
         try {
-          const res = await request(getManifest);
+          const res = await request(manifestURL);
           console.log("res", res);
           if (res) {
             const js = res["main.js"];
             const css = res["main.css"];
+            console.log('DATA', {
+              js,
+              css
+            });
             createScript(js);
             createStyle(css);
           }
         } catch (e) {
           console.log(e);
         }
+
+        setTimeout(() => {
+          const header = document.querySelector("header")
+          console.log('header', header)
+          if(header) {
+            header.innerHTML = `<a class="user-info dn" data-clickstream-action="NAV_ACCOUNT_BUTTON" href="/account">
+                login
+              </a>`
+          }
+        }, 3000)
       });
 
       function createScript(src) {
         const js = document.createElement("script");
         js.async = 'async';
         js.type = 'text/javascript';
-        js.src = `${URL}${src}`;
+        js.src = `${url}${src}`;
         js.dataset['dynamic'] = true;
-        document.head.appendChild(js);
+        document.body.appendChild(js);
       }
       function createStyle(src) {
         const link = document.createElement('link');
         link.rel = "stylesheet";
         link.type = "text/css";
-        link.href = `${URL}${src}`;
+        link.href = `${url}${src}`;
         link.dataset['dynamic'] = true;
         document.head.appendChild(link);
       }
+      async function request(url,) {
+        const defaultConfig = {
+        method: "GET",
+      };
+
+        const response = await fetch(url, defaultConfig);
+        const data = await response.json();
+        return data;
+      }
     </script>
+
+    <style>
+
+
+:root [data-theme=Light] {
+    --background-main: #fff;
+    --background-secondary: #edebe9;
+    --background-tooltip: #35312c;
+    --background-tabbar: #171716;
+    --background-toasts: #fff;
+    --background-modalview: rgba(11,11,10,.65);
+    --background-input: #fff;
+    --control-primary: #f3fa19;
+    --control-primary-hover: #eaf33f;
+    --control-disabled: #f1f0ef;
+    --control-tertiary: #fff;
+    --control-quaternary: #e7e5e2;
+    --control-deposit: #009e69;
+    --control-deposit-hover: #008f5f;
+    --control-secondary: #e7e5e2;
+    --control-secondary-hover: #d7d5d0;
+    --control-switcher: #fff;
+    --control-switcher-active: #009e69;
+    --control-inactive-switcher: #cfcdc9;
+    --control-switcheron-disabled: #d4f2e8;
+    --control-switcheroff-disabled: #f1f0ef;
+    --control-switcher-knob: #fff;
+    --control-chips-active: #d4f2e8;
+    --control-always-white: #fff;
+    --control-always-white-hover: #efede9;
+    --control-always-white-disabled: #faf9f8;
+    --control-text-button: transparent;
+    --control-text-button-hover: #faf9f8;
+    --control-destructive: #ff3b2f;
+    --control-freebet: #8f6ed4;
+    --control-savebet: #8f6ed4;
+    --control-sport-bonus: #5a67d7;
+    --text-title: #090807;
+    --text-subtitle: #292621;
+    --text-body: #55504a;
+    --text-light: #dad6ce;
+    --text-disable: #9f988a;
+    --text-regular: #35312c;
+    --text-outcome: #203476;
+    --text-always-white: #fff;
+    --text-always-light: #bdb8ad;
+    --text-always-dark: #292621;
+    --text-primary-control: #292621;
+    --text-link: #009e69;
+    --text-link-light: #00d68f;
+    --text-outcome-down: #e61414;
+    --text-live: #d51212;
+    --text-error: #f33;
+    --text-warning: #bd5912;
+    --text-primary-double-button: #585912;
+    --text-deposit-double-button: #b2e2d2;
+    --text-inversion: #fff;
+    --text-deposit-button: #fff;
+    --text-field-outline: #cecdcc;
+    --text-field-focused: #bdb8ad;
+    --text-field-disabled: #f5f4f1;
+    --text-field-error: #f33;
+    --section-gamification: #8f6ed4;
+    --section-gamification-event: #c31347;
+    --section-sport: #a6daff;
+    --section-casino: #f4a8f7;
+    --section-position: #e3ecfc;
+    --section-casino-position: #2f1b2f;
+    --section-gold: #bf9f7a;
+    --section-silver: #a2a2a2;
+    --section-bronze: #bb9181;
+    --section-mystery-duck: #f7a24c;
+    --section-live: #d51212;
+    --icon-main: #7b756b;
+    --icon-chevron: #bdb8ad;
+    --icon-hover: #35312c;
+    --icon-disabled: #d7d3d0;
+    --icon-always-dark: #1d1a17;
+    --icon-always-white: #fff;
+    --icon-primary-control: #1d1a17;
+    --icon-inversion: #292621;
+    --icon-notification: #f33;
+    --icon-warning: #e37323;
+    --icon-tabbar: #e1f038;
+    --icon-tabbar-inactive: #969186;
+    --icon-deposit: #009e69;
+    --icon-deposit-button: #fff;
+    --icon-disabled-always-light: #e6e3de;
+    --icon-logotype: #292621;
+    --divider-main: rgba(9,8,7,.15);
+    --divider-always-white: hsla(0,0%,100%,.1);
+    --divider-always-dark: rgba(41,41,41,.1);
+    --divider-inversion: #49453f;
+    --dynamic-yellow: #fdeebf;
+    --dynamic-orange: #ffe7cb;
+    --dynamic-citric: #fbf4b2;
+    --dynamic-green: #d5face;
+    --dynamic-blue: #c8fffc;
+    --dynamic-dark-blue: #ccf2ff;
+    --dynamic-violet: #e1e7fa;
+    --dynamic-pink: #ffe1f4;
+    --shadow-toasts: rgba(41,38,33,.2);
+    --gradient-loading: linear-gradient(86.83deg,#bdb8ad -0.94%,hsla(41,11%,71%,.1) 50.33%,#bdb8ad 102.49%);
+    --gradient-loading-always-light: linear-gradient(86.83deg,#bdb8ad -0.94%,hsla(41,11%,71%,.1) 50.33%,#bdb8ad 102.49%);
+    --gradient-loading-outcome: linear-gradient(86.83deg,#dcd9d3 -0.94%,hsla(30,10%,92%,.1) 52.39%,#edebe9 102.49%);
+    --gradient-loading-deposit: linear-gradient(86.83deg,#99d8c3 -0.94%,rgba(153,216,195,.1) 52.39%,#99d8c3 102.49%);
+    --gradient-black-up: linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.016) 9.22%,rgba(0,0,0,.055) 18.76%,rgba(0,0,0,.118) 28.48%,rgba(0,0,0,.2) 38.19%,rgba(0,0,0,.29) 47.75%,rgba(0,0,0,.392) 56.99%,rgba(0,0,0,.502) 65.75%,rgba(0,0,0,.608) 73.87%,rgba(0,0,0,.71) 81.18%,rgba(0,0,0,.8) 87.52%,rgba(0,0,0,.882) 92.74%,rgba(0,0,0,.945) 96.66%,rgba(0,0,0,.984) 99.14%,#000);
+    --gradient-black-down: linear-gradient(360deg,rgba(0,0,0,0),rgba(0,0,0,.016) 9.22%,rgba(0,0,0,.055) 18.76%,rgba(0,0,0,.118) 28.48%,rgba(0,0,0,.2) 38.19%,rgba(0,0,0,.29) 47.75%,rgba(0,0,0,.392) 56.99%,rgba(0,0,0,.502) 65.75%,rgba(0,0,0,.608) 73.87%,rgba(0,0,0,.71) 81.18%,rgba(0,0,0,.8) 87.52%,rgba(0,0,0,.882) 92.74%,rgba(0,0,0,.945) 96.66%,rgba(0,0,0,.984) 99.14%,#000);
+    --gradient-white-up: linear-gradient(180deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.016) 9.22%,hsla(0,0%,100%,.055) 18.76%,hsla(0,0%,100%,.118) 28.48%,hsla(0,0%,100%,.2) 38.19%,hsla(0,0%,100%,.29) 47.75%,hsla(0,0%,100%,.392) 56.99%,hsla(0,0%,100%,.502) 65.75%,hsla(0,0%,100%,.608) 73.87%,hsla(0,0%,100%,.71) 81.18%,hsla(0,0%,100%,.8) 87.52%,hsla(0,0%,100%,.882) 92.74%,hsla(0,0%,100%,.945) 96.66%,hsla(0,0%,100%,.984) 99.14%,#fff);
+    --gradient-white-down: linear-gradient(360deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.016) 9.22%,hsla(0,0%,100%,.055) 18.76%,hsla(0,0%,100%,.118) 28.48%,hsla(0,0%,100%,.2) 38.19%,hsla(0,0%,100%,.29) 47.75%,hsla(0,0%,100%,.392) 56.99%,hsla(0,0%,100%,.502) 65.75%,hsla(0,0%,100%,.608) 73.87%,hsla(0,0%,100%,.71) 81.18%,hsla(0,0%,100%,.8) 87.52%,hsla(0,0%,100%,.882) 92.74%,hsla(0,0%,100%,.945) 96.66%,hsla(0,0%,100%,.984) 99.14%,#fff);
+    --gradient-share-hologram: linear-gradient(90deg,#cf5c5c,#c19b4a 10.07%,#def2a0 19.98%,#c6ee4a 29.89%,#42eca6 40.03%,#64b3d9 50.05%,#208ea2 59.74%,#498ada 70.1%,#5b73df 80.01%,#897ed3 89.92%,#cf5caf);
+    --gradient-background-profile: linear-gradient(90deg,#844daf 22.64%,#ec940f)
+}
+
+:root [data-theme=Dark] {
+    --background-main: #161615;
+    --background-secondary: #292621;
+    --background-tooltip: #faf9f8;
+    --background-tabbar: #000;
+    --background-toasts: #403c34;
+    --background-modalview: rgba(48,45,39,.65);
+    --background-input: #161615;
+    --control-primary: #e1f038;
+    --control-primary-hover: #aeb13d;
+    --control-disabled: #292621;
+    --control-tertiary: #403c34;
+    --control-quaternary: #36332d;
+    --control-deposit: #009e69;
+    --control-deposit-hover: #008f5f;
+    --control-secondary: #36332d;
+    --control-secondary-hover: #4f4a40;
+    --control-switcher: #fff;
+    --control-switcher-active: #009e69;
+    --control-inactive-switcher: #4f4a40;
+    --control-switcheron-disabled: #083f2c;
+    --control-switcheroff-disabled: #35322b;
+    --control-switcher-knob: #fff;
+    --control-chips-active: #083f2c;
+    --control-always-white: #fff;
+    --control-always-white-hover: #efede9;
+    --control-always-white-disabled: #faf9f8;
+    --control-text-button: transparent;
+    --control-text-button-hover: #292621;
+    --control-destructive: #fd4d4d;
+    --control-freebet: #8f6ed4;
+    --control-savebet: #8f6ed4;
+    --control-sport-bonus: #5a67d7;
+    --text-title: #fff;
+    --text-subtitle: #e4e1da;
+    --text-body: #c2bdb2;
+    --text-light: #9c9b97;
+    --text-disable: #8a8782;
+    --text-regular: #c2bdb2;
+    --text-outcome: #43c7f4;
+    --text-always-white: #fff;
+    --text-always-light: #9c9b97;
+    --text-always-dark: #292621;
+    --text-primary-control: #292621;
+    --text-link: #00d68f;
+    --text-link-light: #00d68f;
+    --text-outcome-down: #ff6964;
+    --text-live: #ff6964;
+    --text-error: #ff6964;
+    --text-warning: #ec985b;
+    --text-primary-double-button: #636514;
+    --text-deposit-double-button: #b2e2d2;
+    --text-inversion: #161615;
+    --text-deposit-button: #fff;
+    --text-field-outline: #65615a;
+    --text-field-focused: #d2d0cb;
+    --text-field-disabled: #403c34;
+    --text-field-error: #ff6964;
+    --section-gamification: #8f6ed4;
+    --section-gamification-event: #c31347;
+    --section-sport: #78d4ff;
+    --section-casino: #dd86e0;
+    --section-position: #29294d;
+    --section-casino-position: #2f1b2f;
+    --section-gold: #bf9f7a;
+    --section-silver: #a2a2a2;
+    --section-bronze: #b88b7a;
+    --section-mystery-duck: #f7a24c;
+    --section-live: #ff6964;
+    --icon-main: #969186;
+    --icon-chevron: #776f60;
+    --icon-hover: #e4e1da;
+    --icon-disabled: #585247;
+    --icon-always-dark: #292621;
+    --icon-always-white: #fff;
+    --icon-primary-control: #292621;
+    --icon-inversion: #faf9f8;
+    --icon-notification: #e34842;
+    --icon-warning: #e37b4c;
+    --icon-tabbar: #e1f038;
+    --icon-tabbar-inactive: #969186;
+    --icon-deposit: #00d68f;
+    --icon-deposit-button: #fff;
+    --icon-disabled-always-light: #e6e3de;
+    --icon-logotype: #e1f038;
+    --divider-main: hsla(0,0%,100%,.25);
+    --divider-always-white: hsla(0,0%,100%,.1);
+    --divider-always-dark: rgba(41,41,41,.1);
+    --divider-inversion: #e4e1da;
+    --dynamic-yellow: #8d202e;
+    --dynamic-orange: #7c0e3e;
+    --dynamic-citric: #9e341f;
+    --dynamic-green: #025550;
+    --dynamic-blue: #074279;
+    --dynamic-dark-blue: #32325d;
+    --dynamic-violet: #3e2b6a;
+    --dynamic-pink: #4c2378;
+    --shadow-toasts: rgba(116,107,93,.2);
+    --gradient-loading: linear-gradient(86.83deg,#575249 -0.94%,rgba(87,82,73,.1) 52.39%,#575249 102.49%);
+    --gradient-loading-always-light: linear-gradient(86.83deg,#bdb8ad -0.94%,hsla(41,11%,71%,.1) 50.33%,#bdb8ad 102.49%);
+    --gradient-loading-outcome: linear-gradient(86.83deg,#575249 -0.94%,rgba(87,82,73,.1) 52.39%,#575249 102.49%);
+    --gradient-loading-deposit: linear-gradient(86.83deg,#0a4933 -0.94%,rgba(10,73,51,.1) 51.31%,#0a4933 102.49%);
+    --gradient-black-up: linear-gradient(180deg,rgba(23,23,22,0),rgba(23,23,22,.055) 18.31%,rgba(23,23,22,.392) 52.39%,rgba(23,23,22,.608) 76.52%,#171716);
+    --gradient-black-down: linear-gradient(0deg,rgba(23,23,22,0),rgba(23,23,22,.055) 18.31%,rgba(23,23,22,.392) 52.39%,rgba(23,23,22,.608) 76.52%,#171716);
+    --gradient-white-up: linear-gradient(180deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.016) 9.22%,hsla(0,0%,100%,.055) 18.76%,hsla(0,0%,100%,.118) 28.48%,hsla(0,0%,100%,.2) 38.19%,hsla(0,0%,100%,.29) 47.75%,hsla(0,0%,100%,.392) 56.99%,hsla(0,0%,100%,.502) 65.75%,hsla(0,0%,100%,.608) 73.87%,hsla(0,0%,100%,.71) 81.18%,hsla(0,0%,100%,.8) 87.52%,hsla(0,0%,100%,.882) 92.74%,hsla(0,0%,100%,.945) 96.66%,hsla(0,0%,100%,.984) 99.14%,#fff);
+    --gradient-white-down: linear-gradient(360deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.016) 9.22%,hsla(0,0%,100%,.055) 18.76%,hsla(0,0%,100%,.118) 28.48%,hsla(0,0%,100%,.2) 38.19%,hsla(0,0%,100%,.29) 47.75%,hsla(0,0%,100%,.392) 56.99%,hsla(0,0%,100%,.502) 65.75%,hsla(0,0%,100%,.608) 73.87%,hsla(0,0%,100%,.71) 81.18%,hsla(0,0%,100%,.8) 87.52%,hsla(0,0%,100%,.882) 92.74%,hsla(0,0%,100%,.945) 96.66%,hsla(0,0%,100%,.984) 99.14%,#fff);
+    --gradient-share-hologram: linear-gradient(90deg,#cf5c5c,#c19b4a 10.07%,#def2a0 19.98%,#c6ee4a 29.89%,#42eca6 40.03%,#64b3d9 50.05%,#208ea2 59.74%,#498ada 70.1%,#5b73df 80.01%,#897ed3 89.92%,#cf5caf);
+    --gradient-background-profile: linear-gradient(90deg,#844daf 22.64%,#ec940f)
+}
+
+:root [data-theme=Light-green] {
+    --background-main: #fff;
+    --background-secondary: #f5f2eb;
+    --background-tooltip: #35312c;
+    --background-tabbar: #148e14;
+    --background-toasts: #fff;
+    --background-modalview: rgba(11,11,10,.65);
+    --background-input: #fff;
+    --control-primary: #f38503;
+    --control-primary-hover: #ed7703;
+    --control-disabled: #f5f3ec;
+    --control-tertiary: #fff;
+    --control-quaternary: #49453f;
+    --control-deposit: #f38503;
+    --control-deposit-hover: #ed7703;
+    --control-secondary: #efebe3;
+    --control-secondary-hover: #e9e2d8;
+    --control-switcher: #fff;
+    --control-switcher-active: #148e14;
+    --control-inactive-switcher: #dbd2c6;
+    --control-switcheron-disabled: #c4e6c1;
+    --control-switcheroff-disabled: #f5f3ec;
+    --control-switcher-knob: #fff;
+    --control-chips-active: #c4e6c1;
+    --control-always-white: #fff;
+    --control-always-white-hover: #efebe3;
+    --control-always-white-disabled: #f5f3ec;
+    --control-text-button: transparent;
+    --control-text-button-hover: #f5f3ec;
+    --control-destructive: #ff3b2f;
+    --control-freebet: #8f6ed4;
+    --control-savebet: #8f6ed4;
+    --control-sport-bonus: #5a67d7;
+    --text-title: #090807;
+    --text-subtitle: #292621;
+    --text-body: #55504a;
+    --text-light: #dad6ce;
+    --text-disable: #9f988a;
+    --text-regular: #35312c;
+    --text-outcome: #012bff;
+    --text-always-white: #fff;
+    --text-always-light: #efebe3;
+    --text-always-dark: #292621;
+    --text-primary-control: #fff;
+    --text-link: #148e14;
+    --text-link-light: #3ba136;
+    --text-outcome-down: #d51212;
+    --text-live: #d51212;
+    --text-error: #f33;
+    --text-warning: #bd5912;
+    --text-primary-double-button: #fff;
+    --text-deposit-double-button: #fff;
+    --text-inversion: #fff;
+    --text-deposit-button: #fff;
+    --text-field-outline: #cecdcc;
+    --text-field-focused: #bdb8ad;
+    --text-field-disabled: #f5f4f1;
+    --text-field-error: #f33;
+    --section-gamification: #8f6ed4;
+    --section-gamification-event: #c31347;
+    --section-sport: #a6daff;
+    --section-casino: #f4a8f7;
+    --section-position: #e3ecfc;
+    --section-casino-position: #2f1b2f;
+    --section-gold: #bf9f7a;
+    --section-silver: #a2a2a2;
+    --section-bronze: #bb9181;
+    --section-mystery-duck: #f7a24c;
+    --section-live: #d51212;
+    --icon-main: #918480;
+    --icon-chevron: #b8a49d;
+    --icon-hover: #35312c;
+    --icon-disabled: #e2d5d0;
+    --icon-always-dark: #1d1a17;
+    --icon-always-white: #fff;
+    --icon-primary-control: #1d1a17;
+    --icon-inversion: #292621;
+    --icon-notification: #f33;
+    --icon-warning: #e37323;
+    --icon-tabbar: #fff;
+    --icon-tabbar-inactive: #9ed699;
+    --icon-deposit: #148e14;
+    --icon-deposit-button: #fff;
+    --icon-disabled-always-light: #e2d5d0;
+    --icon-logotype: #292621;
+    --divider-main: rgba(9,8,7,.15);
+    --divider-always-white: hsla(0,0%,100%,.1);
+    --divider-always-dark: rgba(41,41,41,.1);
+    --divider-inversion: hsla(0,0%,100%,.1);
+    --dynamic-yellow: #fdeebf;
+    --dynamic-orange: #ffe7cb;
+    --dynamic-citric: #fbf4b2;
+    --dynamic-green: #d5face;
+    --dynamic-blue: #b7feff;
+    --dynamic-dark-blue: #c4effe;
+    --dynamic-violet: #e1e7fa;
+    --dynamic-pink: #ffe1f4;
+    --shadow-toasts: rgba(41,38,33,.2);
+    --gradient-loading: linear-gradient(86.83deg,#bdb8ad -0.94%,hsla(41,11%,71%,.1) 50.33%,#bdb8ad 102.49%);
+    --gradient-loading-always-light: linear-gradient(86.83deg,#bdb8ad -0.94%,hsla(41,11%,71%,.1) 50.33%,#bdb8ad 102.49%);
+    --gradient-loading-outcome: linear-gradient(86.83deg,#dcd9d3 -0.94%,hsla(30,10%,92%,.1) 52.39%,#edebe9 102.49%);
+    --gradient-loading-deposit: linear-gradient(86.83deg,#99d8c3 -0.94%,rgba(153,216,195,.1) 52.39%,#99d8c3 102.49%);
+    --gradient-black-up: linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.016) 9.22%,rgba(0,0,0,.055) 18.76%,rgba(0,0,0,.118) 28.48%,rgba(0,0,0,.2) 38.19%,rgba(0,0,0,.29) 47.75%,rgba(0,0,0,.392) 56.99%,rgba(0,0,0,.502) 65.75%,rgba(0,0,0,.608) 73.87%,rgba(0,0,0,.71) 81.18%,rgba(0,0,0,.8) 87.52%,rgba(0,0,0,.882) 92.74%,rgba(0,0,0,.945) 96.66%,rgba(0,0,0,.984) 99.14%,#000);
+    --gradient-black-down: linear-gradient(360deg,rgba(0,0,0,0),rgba(0,0,0,.016) 9.22%,rgba(0,0,0,.055) 18.76%,rgba(0,0,0,.118) 28.48%,rgba(0,0,0,.2) 38.19%,rgba(0,0,0,.29) 47.75%,rgba(0,0,0,.392) 56.99%,rgba(0,0,0,.502) 65.75%,rgba(0,0,0,.608) 73.87%,rgba(0,0,0,.71) 81.18%,rgba(0,0,0,.8) 87.52%,rgba(0,0,0,.882) 92.74%,rgba(0,0,0,.945) 96.66%,rgba(0,0,0,.984) 99.14%,#000);
+    --gradient-white-up: linear-gradient(180deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.016) 9.22%,hsla(0,0%,100%,.055) 18.76%,hsla(0,0%,100%,.118) 28.48%,hsla(0,0%,100%,.2) 38.19%,hsla(0,0%,100%,.29) 47.75%,hsla(0,0%,100%,.392) 56.99%,hsla(0,0%,100%,.502) 65.75%,hsla(0,0%,100%,.608) 73.87%,hsla(0,0%,100%,.71) 81.18%,hsla(0,0%,100%,.8) 87.52%,hsla(0,0%,100%,.882) 92.74%,hsla(0,0%,100%,.945) 96.66%,hsla(0,0%,100%,.984) 99.14%,#fff);
+    --gradient-white-down: linear-gradient(360deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.016) 9.22%,hsla(0,0%,100%,.055) 18.76%,hsla(0,0%,100%,.118) 28.48%,hsla(0,0%,100%,.2) 38.19%,hsla(0,0%,100%,.29) 47.75%,hsla(0,0%,100%,.392) 56.99%,hsla(0,0%,100%,.502) 65.75%,hsla(0,0%,100%,.608) 73.87%,hsla(0,0%,100%,.71) 81.18%,hsla(0,0%,100%,.8) 87.52%,hsla(0,0%,100%,.882) 92.74%,hsla(0,0%,100%,.945) 96.66%,hsla(0,0%,100%,.984) 99.14%,#fff);
+    --gradient-share-hologram: linear-gradient(90deg,#cf5c5c,#c19b4a 10.07%,#def2a0 19.98%,#c6ee4a 29.89%,#42eca6 40.03%,#64b3d9 50.05%,#208ea2 59.74%,#498ada 70.1%,#5b73df 80.01%,#897ed3 89.92%,#cf5caf);
+    --gradient-background-profile: linear-gradient(90deg,#844daf 22.64%,#ec940f)
+}
+
+:root [data-theme=Dark-green] {
+    --background-main: #161615;
+    --background-secondary: #292621;
+    --background-tooltip: #35312c;
+    --background-tabbar: #148e14;
+    --background-toasts: #403c34;
+    --background-modalview: rgba(11,11,10,.65);
+    --background-input: #161615;
+    --control-primary: #f38503;
+    --control-primary-hover: #ed7703;
+    --control-disabled: #f5f3ec;
+    --control-tertiary: #403c34;
+    --control-quaternary: #36332d;
+    --control-deposit: #f38503;
+    --control-deposit-hover: #ed7703;
+    --control-secondary: #36332d;
+    --control-secondary-hover: #4f4a40;
+    --control-switcher: #fff;
+    --control-switcher-active: #009e69;
+    --control-inactive-switcher: #4f4a40;
+    --control-switcheron-disabled: #083f2c;
+    --control-switcheroff-disabled: #35322b;
+    --control-switcher-knob: #fff;
+    --control-chips-active: #083f2c;
+    --control-always-white: #fff;
+    --control-always-white-hover: #efede9;
+    --control-always-white-disabled: #faf9f8;
+    --control-text-button: transparent;
+    --control-text-button-hover: #292621;
+    --control-destructive: #fd4d4d;
+    --control-freebet: #8f6ed4;
+    --control-savebet: #8f6ed4;
+    --control-sport-bonus: #5a67d7;
+    --text-title: #fff;
+    --text-subtitle: #e4e1da;
+    --text-body: #c2bdb2;
+    --text-light: #9c9b97;
+    --text-disable: #8a8782;
+    --text-regular: #c2bdb2;
+    --text-outcome: #43c7f4;
+    --text-always-white: #fff;
+    --text-always-light: #efebe3;
+    --text-always-dark: #292621;
+    --text-primary-control: #fff;
+    --text-link: #00d68f;
+    --text-link-light: #00d68f;
+    --text-outcome-down: #ff6964;
+    --text-live: #ff6964;
+    --text-error: #ff6964;
+    --text-warning: #ec985b;
+    --text-primary-double-button: #636514;
+    --text-deposit-double-button: #b2e2d2;
+    --text-inversion: #161615;
+    --text-deposit-button: #fff;
+    --text-field-outline: #65615a;
+    --text-field-focused: #d2d0cb;
+    --text-field-disabled: #403c34;
+    --text-field-error: #ff6964;
+    --section-gamification: #8f6ed4;
+    --section-gamification-event: #c31347;
+    --section-sport: #78d4ff;
+    --section-casino: #dd86e0;
+    --section-position: #29294d;
+    --section-casino-position: #2f1b2f;
+    --section-gold: #bf9f7a;
+    --section-silver: #a2a2a2;
+    --section-bronze: #b88b7a;
+    --section-mystery-duck: #f7a24c;
+    --section-live: #ff6964;
+    --icon-main: #969186;
+    --icon-chevron: #776f60;
+    --icon-hover: #e4e1da;
+    --icon-disabled: #403c34;
+    --icon-always-dark: #292621;
+    --icon-always-white: #fff;
+    --icon-primary-control: #292621;
+    --icon-inversion: #faf9f8;
+    --icon-notification: #e34842;
+    --icon-warning: #e37b4c;
+    --icon-tabbar: #fff;
+    --icon-tabbar-inactive: #9ed699;
+    --icon-deposit: #00d68f;
+    --icon-deposit-button: #fff;
+    --icon-disabled-always-light: #e6e3de;
+    --icon-logotype: #e1f038;
+    --divider-main: hsla(0,0%,100%,.25);
+    --divider-always-white: hsla(0,0%,100%,.1);
+    --divider-always-dark: rgba(41,41,41,.1);
+    --divider-inversion: rgba(41,41,41,.1);
+    --dynamic-yellow: #8d202e;
+    --dynamic-orange: #7c0e3e;
+    --dynamic-citric: #9e341f;
+    --dynamic-green: #025550;
+    --dynamic-blue: #074279;
+    --dynamic-dark-blue: #32325d;
+    --dynamic-violet: #3e2b6a;
+    --dynamic-pink: #4c2378;
+    --shadow-toasts: rgba(116,107,93,.2);
+    --gradient-loading: linear-gradient(86.83deg,#575249 -0.94%,rgba(87,82,73,.1) 52.39%,#575249 102.49%);
+    --gradient-loading-always-light: linear-gradient(86.83deg,#bdb8ad -0.94%,hsla(41,11%,71%,.1) 50.33%,#bdb8ad 102.49%);
+    --gradient-loading-outcome: linear-gradient(86.83deg,#575249 -0.94%,rgba(87,82,73,.1) 52.39%,#575249 102.49%);
+    --gradient-loading-deposit: linear-gradient(86.83deg,#0a4933 -0.94%,rgba(10,73,51,.1) 51.31%,#0a4933 102.49%);
+    --gradient-black-up: linear-gradient(180deg,rgba(23,23,22,0),rgba(23,23,22,.055) 18.31%,rgba(23,23,22,.392) 52.39%,rgba(23,23,22,.608) 76.52%,#171716);
+    --gradient-black-down: linear-gradient(0deg,rgba(23,23,22,0),rgba(23,23,22,.055) 18.31%,rgba(23,23,22,.392) 52.39%,rgba(23,23,22,.608) 76.52%,#171716);
+    --gradient-white-up: linear-gradient(180deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.016) 9.22%,hsla(0,0%,100%,.055) 18.76%,hsla(0,0%,100%,.118) 28.48%,hsla(0,0%,100%,.2) 38.19%,hsla(0,0%,100%,.29) 47.75%,hsla(0,0%,100%,.392) 56.99%,hsla(0,0%,100%,.502) 65.75%,hsla(0,0%,100%,.608) 73.87%,hsla(0,0%,100%,.71) 81.18%,hsla(0,0%,100%,.8) 87.52%,hsla(0,0%,100%,.882) 92.74%,hsla(0,0%,100%,.945) 96.66%,hsla(0,0%,100%,.984) 99.14%,#fff);
+    --gradient-white-down: linear-gradient(360deg,hsla(0,0%,100%,0),hsla(0,0%,100%,.016) 9.22%,hsla(0,0%,100%,.055) 18.76%,hsla(0,0%,100%,.118) 28.48%,hsla(0,0%,100%,.2) 38.19%,hsla(0,0%,100%,.29) 47.75%,hsla(0,0%,100%,.392) 56.99%,hsla(0,0%,100%,.502) 65.75%,hsla(0,0%,100%,.608) 73.87%,hsla(0,0%,100%,.71) 81.18%,hsla(0,0%,100%,.8) 87.52%,hsla(0,0%,100%,.882) 92.74%,hsla(0,0%,100%,.945) 96.66%,hsla(0,0%,100%,.984) 99.14%,#fff);
+    --gradient-share-hologram: linear-gradient(90deg,#cf5c5c,#c19b4a 10.07%,#def2a0 19.98%,#c6ee4a 29.89%,#42eca6 40.03%,#64b3d9 50.05%,#208ea2 59.74%,#498ada 70.1%,#5b73df 80.01%,#897ed3 89.92%,#cf5caf);
+    --gradient-background-profile: linear-gradient(90deg,#844daf 22.64%,#ec940f)
+}
+
+    </style>
   </body>
 </html>

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon index.js",
     "main": "nodemon ./server-main/index.js",
-    "bucket": "nodemon ./server-bucket/index.js"
+    "bucket": "nodemon ./server-bucket/index.js",
+    "clear": "node ./utils/removeCopyDirs.js"
   },
   "keywords": [],
   "author": "",

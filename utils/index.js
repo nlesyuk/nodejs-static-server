@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 
 /**
  * 复制文件夹到目标文件夹
@@ -45,9 +46,18 @@ function copyDir(src, dest, callback) {
   });
 };
 
-function removeDir(dir) {
+async function removeDir(dir) {
   // delete directory recursively
-  fs.rmdir(dir, { recursive: true }, err => {
+  // fs.rmdir(dir, { recursive: true }, err => {
+  //   if (err) {
+  //     throw err
+  //   }
+
+  //   console.log(`${dir} is deleted!`)
+  // })
+
+  // delete directory recursively
+  await fs.rm(dir, { recursive: true, force: true }, err => {
     if (err) {
       throw err
     }
